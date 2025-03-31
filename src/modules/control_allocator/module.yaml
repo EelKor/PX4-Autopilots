@@ -234,6 +234,17 @@ parameters:
             instance_start: 0
             default: 0
 
+        FDD_M${i}_STATUS:
+            description:
+                short: M${i} Status, Fault Injection purpose
+                long: |
+                    This allows a 100% = Normal, 50% = 50% Fail, 0% = 100% Fail. Developed by Seungshin Lee
+            type: int32
+            reboot_required: false
+            num_instances: 8
+            default: [100, 100, 100, 100, 100, 100, 100, 100]
+            requires_ethernet: false
+
         # control surfaces
         CA_SV_CS_COUNT:
             description:

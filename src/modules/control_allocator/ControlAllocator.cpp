@@ -306,17 +306,23 @@ ControlAllocator::Run()
 #endif
 
 	// Check if parameters have changed
-	if (_parameter_update_sub.updated() && !_armed) {
+	// Modifyied By SSLEE 
+	// - 기존에는 Arm 되어 있을때는 파라미터 업데이트 수행하지 않았음
+	// - 항상 파라미터 업데이트를 수행하도록 코드 수정
+	if (_parameter_update_sub.updated() ) {
 		// clear update
 		parameter_update_s param_update;
 		_parameter_update_sub.copy(&param_update);
 
-		if (_handled_motor_failure_bitmask == 0) {
-			// We don't update the geometry after an actuator failure, as it could lead to unexpected results
-			// (e.g. a user could add/remove motors, such that the bitmask isn't correct anymore)
-			updateParams();
-			parameters_updated();
-		}
+		updateParams();
+		parameters_updated();
+
+		//if (_handled_motor_failure_bitmask == 0) {
+		//	// We don't update the geometry after an actuator failure, as it could lead to unexpected results
+		//	// (e.g. a user could add/remove motors, such that the bitmask isn't correct anymore)
+		//	updateParams();
+		//	parameters_updated();
+		//}
 	}
 
 	if (_num_control_allocation == 0 || _actuator_effectiveness == nullptr) {
@@ -652,12 +658,55 @@ ControlAllocator::publish_actuator_controls()
 
 	uint32_t stopped_motors = _actuator_effectiveness->getStoppedMotors() | _handled_motor_failure_bitmask;
 
+	// Add by SSLEE - RC신호 참조해 오기 및 고장 주입 S/W 구현
+	input_rc_s input_rc;
+	bool inject_motor_failure = false;
+	if(_input_rc_sub.update(&input_rc)) {
+		inject_motor_failure = (input_rc.values[7] > 1800); // 8번채널 RC 값이 1800 이상이면 Fault 주입
+	}
+
 	// motors
 	int motors_idx;
-
 	for (motors_idx = 0; motors_idx < _num_actuators[0] && motors_idx < actuator_motors_s::NUM_CONTROLS; motors_idx++) {
 		int selected_matrix = _control_allocation_selection_indexes[actuator_idx];
 		float actuator_sp = _control_allocation[selected_matrix]->getActuatorSetpoint()(actuator_idx_matrix[selected_matrix]);
+		
+		// Add by SSLEE - Fault Injection
+		// - 모터상태 파라미터를 참조해서 고장 주입 수행
+		// - 고장주입 S/W가 On이면 고장 주입 아니면 안함
+		if(inject_motor_failure) {
+			switch (motors_idx)
+			{
+			case 0:
+				actuator_sp  = actuator_sp * (float)_param_fdd_m1_status.get() / 100;
+				break;
+
+			case 1:
+				actuator_sp  = actuator_sp * (float)_param_fdd_m2_status.get() / 100;
+				break;
+			
+			case 2:
+				actuator_sp  = actuator_sp * (float)_param_fdd_m3_status.get() / 100;
+				break;			
+			
+			case 3:
+				actuator_sp  = actuator_sp * (float)_param_fdd_m4_status.get() / 100;
+				break;			
+			
+			case 4:
+				actuator_sp  = actuator_sp * (float)_param_fdd_m5_status.get() / 100;
+				break;
+			
+			case 5:
+				actuator_sp  = actuator_sp * (float)_param_fdd_m6_status.get() / 100;
+				break;
+
+			default:
+				actuator_sp  = actuator_sp;
+				break;
+			}
+		}
+		
 		actuator_motors.control[motors_idx] = PX4_ISFINITE(actuator_sp) ? actuator_sp : NAN;
 
 		if (stopped_motors & (1u << motors_idx)) {

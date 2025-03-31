@@ -77,6 +77,7 @@
 #include <uORB/topics/vehicle_thrust_setpoint.h>
 #include <uORB/topics/vehicle_status.h>
 #include <uORB/topics/failure_detector_status.h>
+#include <uORB/topics/input_rc.h> // ADD by SSLEE RC조종기로 고장주입하기 위해
 
 class ControlAllocator : public ModuleBase<ControlAllocator>, public ModuleParams, public px4::ScheduledWorkItem
 {
@@ -186,6 +187,8 @@ private:
 
 	uORB::Subscription _vehicle_status_sub{ORB_ID(vehicle_status)};
 	uORB::Subscription _failure_detector_status_sub{ORB_ID(failure_detector_status)};
+	
+	uORB::Subscription _input_rc_sub{ORB_ID(input_rc)}; // ADD by SSLEE - RC조종기로 고장주입하기 위해
 
 	matrix::Vector3f _torque_sp;
 	matrix::Vector3f _thrust_sp;
@@ -209,7 +212,14 @@ private:
 		(ParamInt<px4::params::CA_AIRFRAME>) _param_ca_airframe,
 		(ParamInt<px4::params::CA_METHOD>) _param_ca_method,
 		(ParamInt<px4::params::CA_FAILURE_MODE>) _param_ca_failure_mode,
-		(ParamInt<px4::params::CA_R_REV>) _param_r_rev
+		(ParamInt<px4::params::CA_R_REV>) _param_r_rev,
+		(ParamInt<px4::params::FDD_M1_STATUS>) _param_fdd_m1_status,
+		(ParamInt<px4::params::FDD_M2_STATUS>) _param_fdd_m2_status,
+		(ParamInt<px4::params::FDD_M3_STATUS>) _param_fdd_m3_status,
+		(ParamInt<px4::params::FDD_M4_STATUS>) _param_fdd_m4_status,
+		(ParamInt<px4::params::FDD_M5_STATUS>) _param_fdd_m5_status,
+		(ParamInt<px4::params::FDD_M6_STATUS>) _param_fdd_m6_status
+		
 	)
 
 };
