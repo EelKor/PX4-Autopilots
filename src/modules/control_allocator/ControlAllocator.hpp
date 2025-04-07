@@ -77,7 +77,7 @@
 #include <uORB/topics/vehicle_thrust_setpoint.h>
 #include <uORB/topics/vehicle_status.h>
 #include <uORB/topics/failure_detector_status.h>
-#include <uORB/topics/input_rc.h> // ADD by SSLEE RC조종기로 고장주입하기 위해
+#include <uORB/topics/input_rc.h> // ADD by SSLEE - RC조종기로 고장주입하기 위해
 
 class ControlAllocator : public ModuleBase<ControlAllocator>, public ModuleParams, public px4::ScheduledWorkItem
 {

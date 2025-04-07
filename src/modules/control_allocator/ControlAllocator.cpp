@@ -306,9 +306,8 @@ ControlAllocator::Run()
 #endif
 
 	// Check if parameters have changed
-	// Modifyied By SSLEE 
+	// Modifyied By SSLEE - 항상 파라미터 업데이트를 수행하도록 코드 수정
 	// - 기존에는 Arm 되어 있을때는 파라미터 업데이트 수행하지 않았음
-	// - 항상 파라미터 업데이트를 수행하도록 코드 수정
 	if (_parameter_update_sub.updated() ) {
 		// clear update
 		parameter_update_s param_update;
@@ -671,8 +670,7 @@ ControlAllocator::publish_actuator_controls()
 		int selected_matrix = _control_allocation_selection_indexes[actuator_idx];
 		float actuator_sp = _control_allocation[selected_matrix]->getActuatorSetpoint()(actuator_idx_matrix[selected_matrix]);
 		
-		// Add by SSLEE - Fault Injection
-		// - 모터상태 파라미터를 참조해서 고장 주입 수행
+		// Add by SSLEE- 모터상태 파라미터를 참조해서 고장 주입 수행
 		// - 고장주입 S/W가 On이면 고장 주입 아니면 안함
 		if(inject_motor_failure) {
 			switch (motors_idx)
