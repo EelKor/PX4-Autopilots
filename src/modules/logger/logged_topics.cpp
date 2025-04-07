@@ -60,7 +60,7 @@ void LoggedTopics::add_default_topics()
 	add_optional_topic("external_ins_global_position");
 	add_optional_topic("external_ins_local_position");
 	add_optional_topic("esc_status", 250);
-	add_topic("failure_detector_status", 100);
+	add_topic("failure_detector_status", 0); // Modify by SSLEE - failure_detector_status 최대속도로 로깅
 	add_topic("failsafe_flags");
 	add_optional_topic("follow_target", 500);
 	add_optional_topic("follow_target_estimator", 200);
@@ -74,7 +74,7 @@ void LoggedTopics::add_default_topics()
 	add_optional_topic("heater_status");
 	add_topic("home_position");
 	add_topic("hover_thrust_estimate", 100);
-	add_topic("input_rc", 500);
+	add_topic("input_rc", 0); // Modify by SSLEE - input_rc 최대속도로 로깅
 	add_optional_topic("internal_combustion_engine_status", 10);
 	add_optional_topic("iridiumsbd_status", 1000);
 	add_optional_topic("irlock_report", 1000);
@@ -88,7 +88,7 @@ void LoggedTopics::add_default_topics()
 	add_topic("mission_result");
 	add_topic("navigator_mission_item");
 	add_topic("npfg_status", 100);
-	add_topic("offboard_control_mode", 100);
+	// add_topic("offboard_control_mode", 100); Modify by SSLEE - 불필요한 로깅 비활성화
 	add_topic("onboard_computer_status", 10);
 	add_topic("parameter_update");
 	add_topic("position_controller_status", 500);
@@ -108,7 +108,7 @@ void LoggedTopics::add_default_topics()
 	add_optional_topic("tecs_status", 200);
 	add_optional_topic("tiltrotor_extra_controls", 100);
 	add_topic("trajectory_setpoint", 200);
-	add_topic("transponder_report");
+	// add_topic("transponder_report"); // Modify by SSLEE - 불필요한 로깅 비활성화
 	add_topic("vehicle_acceleration", 50);
 	add_topic("vehicle_air_data", 200);
 	add_topic("vehicle_angular_velocity", 20);
